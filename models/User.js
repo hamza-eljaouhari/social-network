@@ -5,14 +5,11 @@ const jwt = require('jsonwebtoken')
 module.exports = (sequelize, DataTypes) => {
   
   const User = sequelize.define('user', {
-    name : DataTypes.STRING,
-email : DataTypes.STRING,
-password : DataTypes.STRING,
-created_at : DataTypes.DATE,
-updated_at : DataTypes.DATE,
-
-      },{underscored: true}
-    );
+      username : DataTypes.STRING,
+      email : DataTypes.STRING,
+      password : DataTypes.STRING,
+    },{underscored: true}
+  );
 
     User.signIn = async (email,password) => {
       let user = await User.findOne({where : { email : email}})
@@ -21,8 +18,8 @@ updated_at : DataTypes.DATE,
       let status = await bcrypt.compare(password,user.toJSON().password)
       if(!status) return {message : 'Wrong email or password'}
   
-      let token = jwt.sign({ id: user.id, name: user.name, email: user.email }, process.env.JWT_ENCRYPTION, { expiresIn: process.env.JWT_EXPIRATION });
-      return ({ user: { id: user.id, name: user.name, email: user.email }, access_token: token })
+      let token = jwt.sign({ id: user.id, name: user.username, email: user.email }, process.env.JWT_ENCRYPTION, { expiresIn: process.env.JWT_EXPIRATION });
+      return ({ user: { id: user.id, name: user.username, email: user.email }, access_token: token })
     };
     User.signUp = async (name,email,password) => {
       let user = await User.findOne({ where: { email: email } })
@@ -33,12 +30,12 @@ updated_at : DataTypes.DATE,
                                   name: name, 
                               password: encryptedPass,
                               })
-      const token = jwt.sign({ id: user.id, name: user.name, email: user.email }, process.env.JWT_ENCRYPTION, { expiresIn: process.env.JWT_EXPIRATION });
-      return ({ user: { id: user.id, name: user.name, email: user.email }, access_token: token })
+      const token = jwt.sign({ id: user.id, name: user.username, email: user.email }, process.env.JWT_ENCRYPTION, { expiresIn: process.env.JWT_EXPIRATION });
+      return ({ user: { id: user.id, name: user.username, email: user.email }, access_token: token })
     }
 
   User.associate = (models) => {
-      
+    User.belongsToMany(models.Community, {through: models.User_community});
   }    
   return User
 }

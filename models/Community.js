@@ -6,9 +6,7 @@ module.exports = (sequelize, DataTypes) => {
   
   const Community = sequelize.define('community', {
     name : DataTypes.STRING,
-created_at : DataTypes.DATE,
-updated_at : DataTypes.DATE,
-owner_id : DataTypes.INTEGER,
+    user_id : DataTypes.INTEGER,
 
       },{underscored: true}
     );
@@ -17,8 +15,8 @@ owner_id : DataTypes.INTEGER,
     
 
   Community.associate = (models) => {
-      Community.belongsTo(models.User) 
- 
-  }    
+    Community.belongsToMany(models.User, {through: models.User_community});
+  }
+
   return Community
 }

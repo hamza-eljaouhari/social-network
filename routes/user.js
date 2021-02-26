@@ -4,8 +4,9 @@
     const userController  = require('../controllers/userController')
     const webMiddleware       = require('../middleware/web');
   
-    router.get('/api/users',webMiddleware.checkJWT,userController.getUsers);
-    router.get('/api/users/:id',webMiddleware.checkJWT,userController.getUser);
+    router.get('/api/users',userController.getUsers);
+    router.get('/api/users/:id/profile',userController.getUserCommunities);
+    router.get('/api/users/:id',userController.getUser);
     router.post('/api/users',webMiddleware.checkJWT,userController.addUser);
     router.patch('/api/users/:id',webMiddleware.checkJWT,userController.editUser);
     router.delete('/api/users/:id',webMiddleware.checkJWT,userController.deleteUser);

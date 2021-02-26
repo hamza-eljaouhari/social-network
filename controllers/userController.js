@@ -1,6 +1,6 @@
 
 const model  = require('../models');
-const Joi    = require('joi')
+const Joi    = require('joi');
 
 module.exports.signUp = async (req,res,next) => {
     try{
@@ -65,6 +65,7 @@ module.exports.signIn = async (req,res,next) => {
         users.current_page = req.query.page
         return res.status(200).send(users);
     }catch(error){
+        console.log(error)
         return res.status(400).send({message : 'something went wrong'})
     }
 }
@@ -73,20 +74,58 @@ module.exports.signIn = async (req,res,next) => {
        if(!req.params.id) throw new Error('id not found');
        let user =  await model.User.findOne({
            where : { id : req.params.id},
-           
         })
+
+        
        return res.status(200).send(user);
                
     }catch(error) {
         return res.status(400).send({message : 'something went wrong'})
     }
 }
+
+module.exports.getUserCommunities = (req, res, next) => {
+    const profile = model.User.findOne({
+      include: [
+        {
+          model: model.Community,
+        }
+      ],
+      where : { id : req.params.id},
+    }).then((user) => {
+        const communities = user.communities.map((community) => {
+            return {
+                id: community.id,
+                name: community.name,
+                createdAt: community.createdAt,
+                updatedAt: community.updatedAt,
+                joinedAt: community.user_community.createdAt,
+                rejoinedAt: community.user_community.updatedAt
+            }
+        })
+
+        const profile = {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+        }
+
+        res.status(200).send({
+            ...profile,
+            communities: communities
+        });
+    });
+
+};
+
  module.exports.addUser = async(req,res,next) => {
     try{
         let user = await model.User.create({
                                     name:req.body.name, 
-email:req.body.email, 
-password:req.body.password, 
+                                    email:req.body.email, 
+                                    password:req.body.password, 
 
                                     })
         return res.status(200).send(user)
