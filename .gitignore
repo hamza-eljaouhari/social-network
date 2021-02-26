@@ -1,0 +1,14 @@
+
+/node_modules
+/logs/*.log
+/logs/*.json
+/tests
+/uploads
+/tmp
+*.heapsnapshot
+ngrok
+*.log
+blueprint.txt
+Dockerfile
+.dockerignore
+docker-commands
