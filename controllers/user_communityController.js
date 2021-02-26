@@ -46,8 +46,7 @@ const Joi    = require('joi')
     try{
         let user_community = await model.User_community.create({
                                     subscriber_id:req.body.subscriber_id, 
-community_id:req.body.community_id, 
-
+                                    community_id:req.body.community_id, 
                                     })
         return res.status(200).send(user_community)
     }catch(error){

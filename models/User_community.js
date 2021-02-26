@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
   const User_community = sequelize.define('user_community', {
         created_at : DataTypes.DATE,
         updated_at : DataTypes.DATE,
-        user_id : DataTypes.INTEGER,
+        subscriber_id : DataTypes.INTEGER,
         community_id : DataTypes.INTEGER,
       },{underscored: true}
     );
