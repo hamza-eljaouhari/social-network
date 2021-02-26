@@ -45,7 +45,7 @@ const Joi    = require('joi')
  module.exports.addUser_community = async(req,res,next) => {
     try{
         let user_community = await model.User_community.create({
-                                    subscriber_id:req.body.subscriber_id, 
+                                    user_id:req.body.user_id, 
                                     community_id:req.body.community_id, 
                                     })
         return res.status(200).send(user_community)
@@ -57,7 +57,7 @@ const Joi    = require('joi')
     try{
         if(!req.params.id) throw new Error('id not found');
         let user_community = await model.User_community.findByPk(req.params.id);
-        user_community.subscriber_id = req.body.subscriber_id 
+        user_community.user_id = req.body.user_id 
 user_community.community_id = req.body.community_id 
 
         user_community.save();
