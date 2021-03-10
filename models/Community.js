@@ -9,10 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     owner_id : DataTypes.INTEGER,
       },{underscored: true}
     );
-
     
-    
-
   Community.associate = (models) => {
     Community.belongsToMany(models.User, {through: models.User_community});
   }

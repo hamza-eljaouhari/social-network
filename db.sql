@@ -34,17 +34,17 @@
     ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8; 
     
         
-    #CREATE USER_COMMUNITY TABLE
-    DROP TABLE IF EXISTS `user_communities`;
+    #CREATE SUBSCRIPTIONS TABLE
+    DROP TABLE IF EXISTS `subscriptions`;
     CREATE TABLE `user_communities` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
     `created_at` timestamp, 
     `updated_at` timestamp, 
-    `subscriber_id` int (11)  unsigned DEFAULT NULL, 
+    `user_id` int (11)  unsigned DEFAULT NULL, 
     `community_id` int (11)  unsigned DEFAULT NULL, 
 
-    PRIMARY KEY (`id`),
-    CONSTRAINT `user_ibfk_1` FOREIGN KEY (`subscriber_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,CONSTRAINT `community_ibfk_0` FOREIGN KEY (`community_id`) REFERENCES `communities` (`id`) ON DELETE CASCADE
+   z
+    CONSTRAINT `user_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,CONSTRAINT `community_ibfk_0` FOREIGN KEY (`community_id`) REFERENCES `communities` (`id`) ON DELETE CASCADE
     ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8; 
     
         

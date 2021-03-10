@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 
 module.exports = (sequelize, DataTypes) => {
   
-  const User_community = sequelize.define('user_community', {
+  const User_community = sequelize.define('subscriptions', {
         created_at : DataTypes.DATE,
         updated_at : DataTypes.DATE,
         user_id : DataTypes.INTEGER,

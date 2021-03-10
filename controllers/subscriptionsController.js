@@ -14,7 +14,7 @@ const Joi    = require('joi')
         req.query.sort_type  = req.query.sort_type ? req.query.sort_type : 'desc'
         
         let user_communities  = {}
-        let response = await model.User_community.findAndCountAll({
+        let response = await model.Subscriptions.findAndCountAll({
                                     limit : parseInt(req.query.per_page),
                                     order: [[req.query.sort_field, req.query.sort_type]],
                                     offset : parseInt(offset),
@@ -29,48 +29,48 @@ const Joi    = require('joi')
         return res.status(400).send({message : 'something went wrong'})
     }
 }
- module.exports.getUser_community = async (req,res,next) => {
+ module.exports.getSubscriptions = async (req,res,next) => {
     try{
        if(!req.params.id) throw new Error('id not found');
-       let user_community =  await model.User_community.findOne({
+       let subscriptions =  await model.Subscriptions.findOne({
            where : { id : req.params.id},
            include : [{model  : model.User , attributes : ['id'] },{model  : model.Community , attributes : ['id'] },]
         })
-       return res.status(200).send(user_community);
+       return res.status(200).send(subscriptions);
                
     }catch(error) {
         return res.status(400).send({message : 'something went wrong'})
     }
 }
- module.exports.addUser_community = async(req,res,next) => {
+ module.exports.addSubscriptions = async(req,res,next) => {
     try{
-        let user_community = await model.User_community.create({
+        let subscriptions = await model.Subscriptions.create({
                                     user_id:req.body.user_id, 
                                     community_id:req.body.community_id, 
                                     })
-        return res.status(200).send(user_community)
+        return res.status(200).send(subscriptions)
     }catch(error){
         return res.status(400).send({message : 'something went wrong'})
     }
 }
- module.exports.editUser_community = async(req,res,next) => {
+ module.exports.editSubscriptions = async(req,res,next) => {
     try{
         if(!req.params.id) throw new Error('id not found');
-        let user_community = await model.User_community.findByPk(req.params.id);
-        user_community.user_id = req.body.user_id 
-user_community.community_id = req.body.community_id 
+        let subscriptions = await model.Subscriptions.findByPk(req.params.id);
+        subscriptions.user_id = req.body.user_id 
+subscriptions.community_id = req.body.community_id 
 
-        user_community.save();
-        return res.status(200).send(user_community)
+        subscriptions.save();
+        return res.status(200).send(subscriptions)
     }catch(error){
         return res.status(400).send({message : 'something went wrong'})
     }
 }
- module.exports.deleteUser_community = async(req,res,next) => {
+ module.exports.deleteSubscriptions = async(req,res,next) => {
     try{
         if(!req.params.id) throw new Error('id not found');
-        let user_community = await model.User_community.destroy({where : {id : req.params.id}})
-        return res.status(200).send(user_community)
+        let subscriptions = await model.Subscriptions.destroy({where : {id : req.params.id}})
+        return res.status(200).send(subscriptions)
     }catch(error){
         return res.status(400).send({message : 'something went wrong'})
     }
