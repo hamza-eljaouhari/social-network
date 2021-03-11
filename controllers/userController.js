@@ -10,13 +10,15 @@ module.exports.signUp = async (req,res,next) => {
             email: Joi.string().email().min(5).max(100).required(),
             password : Joi.string().min(5).max(100).required()
         };
+        
         await Joi.validate(req.body, schema)
                 .catch(e => { throw new Error(e.details[0].message )})
 
-        let username  = req.body.usernamename,
+        let username  = req.body.username,
             email = req.body.email,
-        password = req.body.password;
-        let response = await model.User.signUp(usernname,email,password)
+            password = req.body.password;
+        let response = await model.User.signUp(username,email,password)
+        
         return res.status(200).send(response)
     }catch(error){
         return res.status(400).send(error)
