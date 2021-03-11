@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 
   User.associate = (models) => {
-    User.belongsToMany(models.Community, {through: models.Subscriptions});
+    User.belongsToMany(models.Community, {through: models.Subscription});
   }    
   return User
 }

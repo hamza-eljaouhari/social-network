@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use('/',require('./routes/web'))
 app.use('/',require('./routes/user')) 
 app.use('/',require('./routes/community')) 
-app.use('/',require('./routes/user_community')) 
+app.use('/',require('./routes/subscription')) 
 app.use('/',require('./routes/post')) 
 app.use('/',require('./routes/comment')) 
 app.use('/',require('./routes/vote')) 

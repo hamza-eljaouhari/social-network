@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 
 module.exports = (sequelize, DataTypes) => {
   
-  const User_community = sequelize.define('subscriptions', {
+  const Subscription = sequelize.define('subscription', {
         created_at : DataTypes.DATE,
         updated_at : DataTypes.DATE,
         user_id : DataTypes.INTEGER,
@@ -12,13 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       },{underscored: true}
     );
 
-    
-    
-
-  User_community.associate = (models) => {
-      User_community.belongsTo(models.User) 
-      User_community.belongsTo(models.Community) 
+  Subscription.associate = (models) => {
+    Subscription.belongsTo(models.User) 
+    Subscription.belongsTo(models.Community) 
   }
   
-  return User_community
+  return Subscription;
 }

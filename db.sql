@@ -1,15 +1,15 @@
 
 
     #CREATE DATABSE
-    DROP DATABASE IF EXISTS `full_vision`;
-    CREATE DATABASE full_vision;
-    USE full_vision; 
+    DROP DATABASE IF EXISTS `social_network`;
+    CREATE DATABASE social_network;
+    USE social_network; 
         
     #CREATE USER TABLE
     DROP TABLE IF EXISTS `users`;
     CREATE TABLE `users` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `username` varchar (255)   DEFAULT NULL, 
+    `username`   varchar (255)   DEFAULT NULL, 
     `email` varchar (255)   DEFAULT NULL, 
     `password` varchar (255)   DEFAULT NULL, 
     `created_at` timestamp, 
@@ -36,14 +36,14 @@
         
     #CREATE SUBSCRIPTIONS TABLE
     DROP TABLE IF EXISTS `subscriptions`;
-    CREATE TABLE `user_communities` (
+    CREATE TABLE `subscriptions` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
     `created_at` timestamp, 
     `updated_at` timestamp, 
     `user_id` int (11)  unsigned DEFAULT NULL, 
     `community_id` int (11)  unsigned DEFAULT NULL, 
 
-   z
+    PRIMARY KEY (`id`),
     CONSTRAINT `user_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,CONSTRAINT `community_ibfk_0` FOREIGN KEY (`community_id`) REFERENCES `communities` (`id`) ON DELETE CASCADE
     ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8; 
     
@@ -61,7 +61,7 @@
     PRIMARY KEY (`id`),
     CONSTRAINT `community_ibfk_3` FOREIGN KEY (`community_id`) REFERENCES `communities` (`id`) ON DELETE CASCADE,CONSTRAINT `user_ibfk_2` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
     ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8; 
-    
+            
         
     #CREATE COMMENT TABLE
     DROP TABLE IF EXISTS `comments`;
@@ -88,6 +88,7 @@
     `updated_at` timestamp, 
     `user_id` int (11)  unsigned DEFAULT NULL, 
     `subject_id` int (11)  unsigned DEFAULT NULL, 
+    `subject_type` varchar (25)   DEFAULT NULL, 
 
     PRIMARY KEY (`id`),
     CONSTRAINT `user_ibfk_6` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,CONSTRAINT `community_ibfk_2` FOREIGN KEY (`subject_id`) REFERENCES `communities` (`id`) ON DELETE CASCADE,CONSTRAINT `post_ibfk_2` FOREIGN KEY (`subject_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE,CONSTRAINT `user_ibfk_4` FOREIGN KEY (`subject_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,CONSTRAINT `comment_ibfk_4` FOREIGN KEY (`subject_id`) REFERENCES `comments` (`id`) ON DELETE CASCADE

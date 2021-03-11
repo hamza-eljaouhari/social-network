@@ -13,3 +13,4 @@ Dockerfile
 docker-commands
 npm-debug.log
 .DS_Store
+/*.env
