@@ -22,7 +22,13 @@ module.exports.signUp = async (req,res,next) => {
         
         return res.status(200).send(response)
     }catch(error){
-        return res.status(400).send(error)
+        var statusCode = 400;
+
+        if(error.name = "EmailAlreadyTakenException"){
+            statusCode = 409;
+        }
+
+        return res.status(statusCode).send(error)
     }
 } 
 
@@ -41,7 +47,13 @@ module.exports.signIn = async (req,res,next) => {
         let response = await model.User.signIn(email,password)
         return res.status(200).send(response)
     }catch(error){
-        return res.status(400).send(error)
+
+        var statusCode = 400;
+
+        if(error.name == "WrongPasswordOrUsernameException"){
+            statusCode = 401;
+        }
+        return res.status(statusCode).send(error)
     }
     
 } 
@@ -220,7 +232,7 @@ module.exports.editUser = async(req,res,next) => {
         return res.status(400).send({message : 'something went wrong'})
     }
 }
- module.exports.deleteUser = async(req,res,next) => {
+module.exports.deleteUser = async(req,res,next) => {
     try{
         if(!req.params.id) throw new Error('id not found');
         let user = await model.User.destroy({where : {id : req.params.id}})
