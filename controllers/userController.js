@@ -204,13 +204,15 @@ module.exports.addUser = async(req,res,next) => {
         return res.status(400).send({message : 'something went wrong'})
     }
 }
- module.exports.editUser = async(req,res,next) => {
+
+module.exports.editUser = async(req,res,next) => {
     try{
         if(!req.params.id) throw new Error('id not found');
         let user = await model.User.findByPk(req.params.id);
+        
         user.name = req.body.name 
-user.email = req.body.email 
-user.password = req.body.password 
+        user.email = req.body.email 
+        user.password = req.body.password 
 
         user.save();
         return res.status(200).send(user)

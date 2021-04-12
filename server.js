@@ -2,6 +2,7 @@
 //API GENERATED WITH LOVE BY https://github.com/skiod
 //v 0.0.1
 const express = require('express');
+var cors = require('cors')
 
 
 const swaggerUi = require('swagger-ui-express');
@@ -9,6 +10,8 @@ const swaggerDocument = require('./swagger.json');
 
 const app = express();
 const bodyParser = require('body-parser');
+
+app.use(cors())
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
