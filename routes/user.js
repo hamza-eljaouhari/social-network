@@ -5,7 +5,8 @@
     const webMiddleware       = require('../middleware/web');
   
     router.get('/api/users', webMiddleware.checkJWT, userController.getUsers);
-    router.get('/api/users/:id/profile', webMiddleware.checkJWT, userController.getUserCommunities);
+    router.get('/api/users/:id/communities', webMiddleware.checkJWT, userController.getUserCommunities);
+    router.get('/api/users/:id/feed', webMiddleware.checkJWT, userController.getUserFeed);
     router.get('/api/users/:id', userController.getUser);
     router.post('/api/users', userController.addUser);
     router.patch('/api/users/:id', userController.editUser);

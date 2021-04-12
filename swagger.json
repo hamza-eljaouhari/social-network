@@ -1,0 +1,139 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "My minimalistic reddit clone",
+        "description": "Example REST API in Express.js. Lore functionallities and technologies will be added in the future, user timeline, Redis, Docker...",
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        }
+    },
+    "host": "localhost:8000",
+    "basePath": "/",
+    "tags": [
+        {
+            "name": "Users",
+            "description": "API for users in the system"
+        }
+    ],
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/users": {
+        "get": {
+        "tags": [
+        "Users"
+        ],
+        "summary": "Get all users in system",
+        "responses": {
+        "200": {
+        "description": "OK",
+        "schema": {
+        "$ref": "#/definitions/Users"
+        }
+        }
+        }
+        }
+        }
+        },
+         "definitions": {
+        "User": {
+        "required": [
+        "name",
+        "_id",
+        "companies"
+        ],
+        "properties": {
+        "_id": {
+        "type": "integer",
+        "uniqueItems": true
+        },
+        "isPublic": {
+        "type": "boolean"
+        },
+        "name": {
+        "type": "string"
+        },
+        "books": {
+        "type": "array",
+        "items": {
+        "type": "object",
+        "properties": {
+        "name": {
+        "type": "string"
+        },
+        "amount": {
+        "type": "number"
+        }
+        }
+        }
+        },
+        "companies": {
+        "type": "array",
+        "items": {
+        "type": "string"
+        }
+        }
+        }
+        },
+        "Users": {
+        "type": "array",
+        "$ref": "#/definitions/User"
+        }
+        },
+    "paths": {
+        "/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get all users in system",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Users"
+                        }
+                    }
+                }
+            }
+        },
+        "/signup": {
+            "post": {
+                "tags": [
+                    "Sign up"
+                ],
+                "description": "Create new user and receive JWT token",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "body",
+                        "description": "User that we want to create",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "New user is created",
+                        "schema": {
+                            "$ref": "#/definitions/User"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

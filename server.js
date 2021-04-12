@@ -3,9 +3,14 @@
 //v 0.0.1
 const express = require('express');
 
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+
 const app = express();
 const bodyParser = require('body-parser');
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(bodyParser.json());
 app.use('/',require('./routes/web'))
