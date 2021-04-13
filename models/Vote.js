@@ -6,11 +6,11 @@ module.exports = (sequelize, DataTypes) => {
   
   const Vote = sequelize.define('vote', {
     up_or_down : DataTypes.BOOLEAN,
-  created_at : DataTypes.DATE,
-  updated_at : DataTypes.DATE,
-  subject_id : DataTypes.INTEGER,
-  user_id : DataTypes.INTEGER,
-  subject_id : DataTypes.INTEGER,
+    created_at : DataTypes.DATE,
+    updated_at : DataTypes.DATE,
+    subject_id : DataTypes.INTEGER,
+    user_id : DataTypes.INTEGER,
+    subject_id : DataTypes.INTEGER,
 
       },{underscored: true}
     );
@@ -26,5 +26,5 @@ module.exports = (sequelize, DataTypes) => {
       Vote.belongsTo(models.Comment) 
   }
       
-  return Vote
+  return Vote;
 }

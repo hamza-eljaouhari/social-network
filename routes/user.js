@@ -17,5 +17,7 @@
 
     router.get('/api/user/feed', webMiddleware.checkJWT, userController.getUserFeed);
 
+    router.post('/api/user/checkJWT', webMiddleware.checkJWT, userController.checkJWT);
+
     module.exports = router;
     

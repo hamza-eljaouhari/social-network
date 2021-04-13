@@ -24,6 +24,10 @@ module.exports = (sequelize, DataTypes) => {
       Post.belongsTo(models.User, {
         foreignKey: "owner_id"
       });
+
+      Post.hasMany(models.Vote, {
+        foreignKey: "subject_id"
+      });
  
   }    
   return Post

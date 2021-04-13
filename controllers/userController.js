@@ -161,16 +161,31 @@ module.exports.getUserFeed = async (req, res, next) => {
                     'owner_id',
                     'community_id'
                 ],
-                include: {
-                    model: model.User,
-                    attributes: [
-                        'id',
-                        'username',
-                        'email',
-                        'createdAt',
-                        'updatedAt',
-                    ]
-                }
+                include: [
+                    {
+                        model: model.User,
+                        attributes: [
+                            'id',
+                            'username',
+                            'email',
+                            'createdAt',
+                            'updatedAt',
+                        ]
+                    },
+                    {
+                        model: model.Vote,
+                        attributes: [
+                            'id',
+                            'up_or_down',
+                            'updated_at'
+                        ],
+                        where: {
+                            subject_type: 'posts',
+                            user_id: req.auth.id
+                        },
+                        required:false
+                    }
+                ]
             }
         ],
         where : { 
@@ -224,7 +239,7 @@ module.exports.getUserFeed = async (req, res, next) => {
             updated_at: user.updated_at
         },
         posts_count: sortedPostsByUpdatedAt.length,
-        posts: sortedPostsByUpdatedAt
+        posts: communities
     });
 };
 
@@ -241,6 +256,14 @@ module.exports.addUser = async(req,res,next) => {
         return res.status(400).send({message : 'something went wrong'})
     }
 }
+
+module.exports.checkJWT = async(req,res,next) => {
+    res.status(200).send({
+        success: true,
+        message: "User can now be automatically logged in."
+    });
+}
+
 
 module.exports.editUser = async(req,res,next) => {
     try{

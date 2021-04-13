@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
   Community.associate = (models) => {
     
     Community.belongsToMany(models.User, {through: models.Subscription});
-    Community.hasMany(models.Post)
+    Community.hasMany(models.Post);
   }
 
   return Community
