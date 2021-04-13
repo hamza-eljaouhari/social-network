@@ -1,7 +1,9 @@
 
 const model  = require('../models');
 const Joi    = require('joi');
-const { Op } = require('sequelize');
+const { sortByCreatedAt, sortByUpdatedAt } = require('../utils/sort')
+const { changeToOneDimensionalArray } = require('../utils/array')
+
 
 module.exports.signUp = async (req,res,next) => {
     try{
@@ -22,13 +24,7 @@ module.exports.signUp = async (req,res,next) => {
         
         return res.status(200).send(response)
     }catch(error){
-        var statusCode = 400;
-
-        if(error.name = "EmailAlreadyTakenException"){
-            statusCode = 409;
-        }
-
-        return res.status(statusCode).send(error)
+        return res.status(error.status ? error.status : 400).send(error)
     }
 } 
 
@@ -47,13 +43,7 @@ module.exports.signIn = async (req,res,next) => {
         let response = await model.User.signIn(email,password)
         return res.status(200).send(response)
     }catch(error){
-
-        var statusCode = 400;
-
-        if(error.name == "WrongPasswordOrUsernameException"){
-            statusCode = 401;
-        }
-        return res.status(statusCode).send(error)
+        return res.status(error.status ? error.status : 400).send(error)
     }
     
 } 
@@ -80,7 +70,6 @@ module.exports.signIn = async (req,res,next) => {
         users.current_page = req.query.page
         return res.status(200).send(users);
     }catch(error){
-        console.log(error)
         return res.status(400).send({message : 'something went wrong'})
     }
 }
@@ -136,71 +125,107 @@ module.exports.getUserCommunities = (req, res, next) => {
 };
 
 
-module.exports.getUserFeed = (req, res, next) => {
-    model.User.findOne({
-      include: [
-        {
-          model: model.Community,
-        }
-      ],
-      where : { id : req.params.id},
-    }).then((user) => {
-        const communitiesIds = user.communities.map((community) => {
-            return community.id;
-        })
+module.exports.getUserFeed = async (req, res, next) => {
 
-        model.Community.findAll({
-            include: [
-                {
-                  model: model.Post,
-                }
-            ],
-            where : { 
-                id: communitiesIds 
+    var user = await model.User.findOne({
+        include: [
+            {
+            model: model.Community,
             }
-        }).then((communities) => {
-
-            const posts = communities.map((community) => {
-                return community.posts;
-            });
-
-            var groupedPosts = posts.map((post) => {
-
-                const community = communities.filter((community) => {
-                    return community.id == post.community_id;
-                })
-
-                post.community_name = community.name;
-                post.community_created_at = community.created_at;
-                post.community_updated_at = community.updated_at;
-                post.community_owner_id = community.owner_id;
-
-                return post;
-            });
-
-            const sortedPostsByCreatedAt = groupedPosts.sort((postA, postB) => {
-                return new Date(postA.createdAt) - new Date(postB.createdAt);
-            });
-
-            const sortedPostsByUpdatedAt = sortedPostsByCreatedAt.sort((postA, postB) => {
-                return new Date(postA.updatedAt) - new Date(postB.updatedAt);
-            });
-
-            res.status(200).send({
-                id: user.id,
-                username: user.username,
-                user_created_at: user.createdAt,
-                user_updated_at: user.updatedAt,
-                posts: sortedPostsByUpdatedAt
-            });
-        })
-
-        //Get posts with most interactions in all communities
-        // res.status(200).send({
-        //     communitiesIds
-        // });
+        ],
+        where : { 
+            id : req.auth.id
+        },
+        attributes: [
+            'id',
+            'email',
+            'username',
+            'created_at',
+            'updated_at'
+        ]
     });
 
+    const communitiesIds = user.communities.map((community) => {
+        return community.id;
+    })
+
+    var communities = await model.Community.findAll({
+        include: [
+            {
+                model: model.Post,
+                attributes: [
+                    'id',
+                    'title',
+                    'created_at',
+                    'updated_at',
+                    'owner_id',
+                    'community_id'
+                ],
+                include: {
+                    model: model.User,
+                    attributes: [
+                        'id',
+                        'username',
+                        'email',
+                        'createdAt',
+                        'updatedAt',
+                    ]
+                }
+            }
+        ],
+        where : { 
+            id: communitiesIds 
+        }
+    });
+
+    const postsBycommunity = communities.map((community) => {
+        return community.posts;
+    });
+
+    oneDimensionalPostsArray = changeToOneDimensionalArray(postsBycommunity)
+
+    var groupedPosts = oneDimensionalPostsArray.map((post) => {
+        const community = communities.find((community) => {
+            return community.id === post.community_id;
+        })
+
+        return {
+            id: post.id,
+            title: post.title,
+            created_at: post.created_at,
+            updated_at: post.updated_at,
+            communityId: post.community_id,
+            community: {
+                id: community.id,
+                name: community.name,
+                created_at: community.createdAt,
+                updated_at: community.updatedAt
+            },
+            owner: {
+                id: post.user.id,
+                email: post.user.email,
+                username: post.user.username,
+                created_at: post.user.created_at
+            }
+        };
+    });
+
+
+    const sortedPostsByCreatedAt = sortByCreatedAt(groupedPosts)
+
+    const sortedPostsByUpdatedAt = sortByUpdatedAt(sortedPostsByCreatedAt);
+    
+    res.status(200).send({
+        user: {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+            created_at: user.cretaed_at,
+            updated_at: user.updated_at
+        },
+        posts_count: sortedPostsByUpdatedAt.length,
+        posts: sortedPostsByUpdatedAt
+    });
 };
 
 module.exports.addUser = async(req,res,next) => {
