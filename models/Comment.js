@@ -6,11 +6,11 @@ module.exports = (sequelize, DataTypes) => {
   
   const Comment = sequelize.define('comment', {
     content : DataTypes.STRING,
-created_at : DataTypes.DATE,
-updated_at : DataTypes.DATE,
-subject_type : DataTypes.STRING,
-owner_id : DataTypes.INTEGER,
-subject_id : DataTypes.INTEGER,
+    created_at : DataTypes.DATE,
+    updated_at : DataTypes.DATE,
+    subject_type : DataTypes.STRING,
+    owner_id : DataTypes.INTEGER,
+    subject_id : DataTypes.INTEGER,
 
       },{underscored: true}
     );

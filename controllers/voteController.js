@@ -33,7 +33,7 @@ const Joi    = require('joi')
     try{
        if(!req.params.id) throw new Error('id not found');
        let vote =  await model.Vote.findOne({
-           where : { id : req.params.id},
+           where : {id : req.params.id},
            include : [{model  : model.User , attributes : ['id'] },{model  : model.Community , attributes : ['id'] },{model  : model.Post , attributes : ['id'] },{model  : model.User , attributes : ['id'] },{model  : model.Comment , attributes : ['id'] },]
         })
        return res.status(200).send(vote);
@@ -44,15 +44,16 @@ const Joi    = require('joi')
 }
  module.exports.addVote = async(req,res,next) => {
     try{
-        let vote = await model.Vote.create({
-                                    up_or_down:req.body.up_or_down, 
-subject_id:req.body.subject_id, 
-user_id:req.body.user_id, 
-subject_id:req.body.subject_id, 
+        var vote = await model.Vote.create({
+            up_or_down: req.body.up_or_down, 
+            subject_id: req.body.subject_id, 
+            user_id: req.auth.id, 
+            subject_type: req.body.subject_type, 
+        });
 
-                                    })
         return res.status(200).send(vote)
     }catch(error){
+        console.log(error)
         return res.status(400).send({message : 'something went wrong'})
     }
 }
@@ -60,12 +61,14 @@ subject_id:req.body.subject_id,
     try{
         if(!req.params.id) throw new Error('id not found');
         let vote = await model.Vote.findByPk(req.params.id);
+        
         vote.up_or_down = req.body.up_or_down 
-vote.subject_id = req.body.subject_id 
-vote.user_id = req.body.user_id 
-vote.subject_id = req.body.subject_id 
+        vote.subject_id = req.body.subject_id 
+        vote.user_id = req.body.user_id 
+        vote.subject_type = req.body.subject_type 
 
         vote.save();
+        
         return res.status(200).send(vote)
     }catch(error){
         return res.status(400).send({message : 'something went wrong'})
@@ -74,7 +77,7 @@ vote.subject_id = req.body.subject_id
  module.exports.deleteVote = async(req,res,next) => {
     try{
         if(!req.params.id) throw new Error('id not found');
-        let vote = await model.Vote.destroy({where : {id : req.params.id}})
+        let vote = await model.Vote.destroy({where : {id : req.params.id, user_id: auth.req.id, subject_id: req.params.subject_id, subject_type: req.params.subject_type}})
         return res.status(200).send(vote)
     }catch(error){
         return res.status(400).send({message : 'something went wrong'})

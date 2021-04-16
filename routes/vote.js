@@ -8,10 +8,7 @@
     router.get('/api/votes/:id',webMiddleware.checkJWT,voteController.getVote);
     router.post('/api/votes',webMiddleware.checkJWT,voteController.addVote);
     router.patch('/api/votes/:id',webMiddleware.checkJWT,voteController.editVote);
-    router.delete('/api/votes/:id',webMiddleware.checkJWT,voteController.deleteVote);
-
-    
-    
+    router.delete('/api/votes/:id/:subject_id/:subject_type',webMiddleware.checkJWT,voteController.deleteVote);
 
     module.exports = router;
     

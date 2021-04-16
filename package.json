@@ -2,7 +2,7 @@
     "name": "full_vision",
     "version": "0.0.1",
     "description": "",
-    "main": "index.js",
+    "main": "server.js",
     "scripts": {
         "start": "nodemon -r dotenv/config ./server.js"
     },
@@ -10,6 +10,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "aws-sdk": "^2.887.0",
         "bcryptjs": "^2.4.3",
         "body-parser": "^1.19.0",
         "cors": "^2.8.5",

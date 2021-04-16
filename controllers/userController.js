@@ -127,120 +127,83 @@ module.exports.getUserCommunities = (req, res, next) => {
 
 module.exports.getUserFeed = async (req, res, next) => {
 
-    var user = await model.User.findOne({
-        include: [
-            {
-            model: model.Community,
-            }
-        ],
-        where : { 
-            id : req.auth.id
-        },
-        attributes: [
-            'id',
-            'email',
-            'username',
-            'created_at',
-            'updated_at'
-        ]
-    });
+    function getMostRecentVote(votes){
+        if(votes.length){
+            const mostRecentVote = votes[votes.length - 1];
 
-    const communitiesIds = user.communities.map((community) => {
-        return community.id;
-    })
-
-    var communities = await model.Community.findAll({
-        include: [
-            {
-                model: model.Post,
-                attributes: [
-                    'id',
-                    'title',
-                    'created_at',
-                    'updated_at',
-                    'owner_id',
-                    'community_id'
-                ],
-                include: [
-                    {
-                        model: model.User,
-                        attributes: [
-                            'id',
-                            'username',
-                            'email',
-                            'createdAt',
-                            'updatedAt',
-                        ]
-                    },
-                    {
-                        model: model.Vote,
-                        attributes: [
-                            'id',
-                            'up_or_down',
-                            'updated_at'
-                        ],
-                        where: {
-                            subject_type: 'posts',
-                            user_id: req.auth.id
-                        },
-                        required:false
-                    }
-                ]
+            return {
+                id: mostRecentVote.id,
+                upOrDown: mostRecentVote.up_or_down,
+                createdAt: mostRecentVote.created_at
             }
-        ],
-        where : { 
-            id: communitiesIds 
         }
-    });
+        
+        return {};
+    }
 
-    const postsBycommunity = communities.map((community) => {
-        return community.posts;
-    });
+    try{
 
-    oneDimensionalPostsArray = changeToOneDimensionalArray(postsBycommunity)
+        var user = await model.User.getUserAndHisCommunities(req.auth.id);
 
-    var groupedPosts = oneDimensionalPostsArray.map((post) => {
-        const community = communities.find((community) => {
-            return community.id === post.community_id;
+        const communitiesIds = user.communities.map((community) => {
+            return community.id;
         })
 
-        return {
-            id: post.id,
-            title: post.title,
-            created_at: post.created_at,
-            updated_at: post.updated_at,
-            communityId: post.community_id,
-            community: {
-                id: community.id,
-                name: community.name,
-                created_at: community.createdAt,
-                updated_at: community.updatedAt
+        var communities = await model.User.getCommunitiesWithPostsAndOwnerAndSelfVote(req.auth.id, communitiesIds);
+
+        const postsBycommunity = communities.map((community) => {
+            return community.posts;
+        });
+
+        oneDimensionalPostsArray = changeToOneDimensionalArray(postsBycommunity)
+
+        var groupedPosts = oneDimensionalPostsArray.map((post) => {
+            const community = communities.find((community) => {
+                return community.id === post.community_id;
+            })
+
+            return {
+                id: post.id,
+                title: post.title,
+                createdAt: post.created_at,
+                updatedAt: post.updated_at,
+                communityId: post.community_id,
+                community: {
+                    id: community.id,
+                    name: community.name,
+                    created_at: community.createdAt,
+                    updated_at: community.updatedAt
+                },
+                owner: {
+                    id: post.user.id,
+                    email: post.user.email,
+                    username: post.user.username,
+                    created_at: post.user.created_at
+                },
+                votes_count: post.votes.length,
+                vote: getMostRecentVote(post.votes)
+            };
+        });
+
+
+        const sortedPostsByCreatedAt = sortByCreatedAt(groupedPosts)
+
+        const sortedPostsByUpdatedAt = sortByUpdatedAt(sortedPostsByCreatedAt);
+        
+        res.status(200).send({
+            user: {
+                id: user.id,
+                email: user.email,
+                username: user.username,
+                created_at: user.cretaed_at,
+                updated_at: user.updated_at
             },
-            owner: {
-                id: post.user.id,
-                email: post.user.email,
-                username: post.user.username,
-                created_at: post.user.created_at
-            }
-        };
-    });
-
-
-    const sortedPostsByCreatedAt = sortByCreatedAt(groupedPosts)
-
-    const sortedPostsByUpdatedAt = sortByUpdatedAt(sortedPostsByCreatedAt);
-    
-    res.status(200).send({
-        user: {
-            id: user.id,
-            email: user.email,
-            username: user.username,
-            created_at: user.cretaed_at,
-            updated_at: user.updated_at
-        },
-        posts_count: sortedPostsByUpdatedAt.length,
-        posts: communities
-    });
+            posts_count: sortedPostsByUpdatedAt.length,
+            posts: sortedPostsByUpdatedAt
+        });
+    }catch(err){
+        res.status(400).send(error)
+    }
 };
 
 module.exports.addUser = async(req,res,next) => {

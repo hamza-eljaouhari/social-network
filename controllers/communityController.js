@@ -45,10 +45,10 @@ const Joi    = require('joi')
  module.exports.addCommunity = async(req,res,next) => {
     try{
         let community = await model.Community.create({
-                                    name:req.body.name, 
-owner_id:req.body.owner_id, 
+                                    name: "", 
+                                    owner_id: req.auth.id, 
+                                })
 
-                                    })
         return res.status(200).send(community)
     }catch(error){
         return res.status(400).send({message : 'something went wrong'})
@@ -57,12 +57,24 @@ owner_id:req.body.owner_id,
  module.exports.editCommunity = async(req,res,next) => {
     try{
         if(!req.params.id) throw new Error('id not found');
+        
         let community = await model.Community.findByPk(req.params.id);
-        community.name = req.body.name 
-community.owner_id = req.body.owner_id 
+        
+        if(req.auth.id === community.owner_id){
 
-        community.save();
-        return res.status(200).send(community)
+            community.name = req.body.name
+            // community.owner_id = req.body.owner_id 
+            
+            community.save();
+            
+            uploadToS3({
+                name: "community-" + post.id.toString() + ".html",
+                content: req.body.content
+            })
+
+            return res.status(200).send(community)
+        }
+
     }catch(error){
         return res.status(400).send({message : 'something went wrong'})
     }

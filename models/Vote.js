@@ -5,18 +5,15 @@ const jwt = require('jsonwebtoken')
 module.exports = (sequelize, DataTypes) => {
   
   const Vote = sequelize.define('vote', {
-    up_or_down : DataTypes.BOOLEAN,
-    created_at : DataTypes.DATE,
-    updated_at : DataTypes.DATE,
-    subject_id : DataTypes.INTEGER,
-    user_id : DataTypes.INTEGER,
-    subject_id : DataTypes.INTEGER,
+      up_or_down : DataTypes.INTEGER,
+      created_at : DataTypes.DATE,
+      updated_at : DataTypes.DATE,
+      subject_id : DataTypes.INTEGER,
+      user_id : DataTypes.INTEGER,
+      subject_type : DataTypes.STRING,
 
       },{underscored: true}
     );
-
-    
-    
 
     Vote.associate = (models) => {
       Vote.belongsTo(models.User) 
