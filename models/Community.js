@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 module.exports = (sequelize, DataTypes) => {
   
   const Community = sequelize.define('community', {
-    name : DataTypes.STRING,
+    title : DataTypes.STRING,
     owner_id : DataTypes.INTEGER,
       },{underscored: true}
     );

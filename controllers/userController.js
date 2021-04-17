@@ -100,7 +100,7 @@ module.exports.getUserCommunities = (req, res, next) => {
         const communities = user.communities.map((community) => {
             return {
                 id: community.id,
-                name: community.name,
+                title: community.title,
                 createdAt: community.createdAt,
                 updatedAt: community.updatedAt,
                 joinedAt: community.user_community.createdAt,
@@ -169,7 +169,7 @@ module.exports.getUserFeed = async (req, res, next) => {
                 communityId: post.community_id,
                 community: {
                     id: community.id,
-                    name: community.name,
+                    title: community.title,
                     created_at: community.createdAt,
                     updated_at: community.updatedAt
                 },

@@ -15,9 +15,9 @@ function AuthorizationMissing(message, status){
 
 module.exports.getPosts = async(req,res,next) => {
     try{
-        const communities = await model.Community.findAndCountAll();
+        const posts = await model.Post.findAndCountAll();
 
-        res.status(200).send(communities)
+        res.status(200).send(posts)
     }catch(error){
         res.status(400).send(error);
     }
@@ -101,7 +101,6 @@ module.exports.getPostsWithPagination = async(req,res,next) => {
         if(!req.params.id) throw new Error('id not found');
         
         let post = await model.Post.findByPk(req.params.id);
-        
 
         if(req.auth.id === post.owner_id){
 
