@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     updated_at : DataTypes.DATE,
     community_id : DataTypes.INTEGER,
     owner_id : DataTypes.INTEGER,
+    has_content: DataTypes.BOOLEAN
 
       },{underscored: true}
     );

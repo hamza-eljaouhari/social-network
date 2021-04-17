@@ -144,18 +144,17 @@ module.exports.getUserFeed = async (req, res, next) => {
     try{
 
         var user = await model.User.getUserAndHisCommunities(req.auth.id);
-
         const communitiesIds = user.communities.map((community) => {
             return community.id;
         })
 
         var communities = await model.User.getCommunitiesWithPostsAndOwnerAndSelfVote(req.auth.id, communitiesIds);
 
-        const postsBycommunity = communities.map((community) => {
+        const postsByCommunity = communities.map((community) => {
             return community.posts;
         });
 
-        oneDimensionalPostsArray = changeToOneDimensionalArray(postsBycommunity)
+        oneDimensionalPostsArray = changeToOneDimensionalArray(postsByCommunity)
 
         var groupedPosts = oneDimensionalPostsArray.map((post) => {
             const community = communities.find((community) => {
@@ -185,7 +184,6 @@ module.exports.getUserFeed = async (req, res, next) => {
             };
         });
 
-
         const sortedPostsByCreatedAt = sortByCreatedAt(groupedPosts)
 
         const sortedPostsByUpdatedAt = sortByUpdatedAt(sortedPostsByCreatedAt);
@@ -202,7 +200,8 @@ module.exports.getUserFeed = async (req, res, next) => {
             posts: sortedPostsByUpdatedAt
         });
     }catch(err){
-        res.status(400).send(error)
+        console.log(err)
+        res.status(400).send(err)
     }
 };
 

@@ -4,6 +4,7 @@
     const communityController  = require('../controllers/communityController')
     const webMiddleware       = require('../middleware/web');
   
+    router.get('/api/communities/:page_number/:per_page',webMiddleware.checkJWT,communityController.getCommunitiesWithPagination);
     router.get('/api/communities',webMiddleware.checkJWT,communityController.getCommunities);
     router.get('/api/communities/:id',webMiddleware.checkJWT,communityController.getCommunity);
     router.post('/api/communities',webMiddleware.checkJWT,communityController.addCommunity);

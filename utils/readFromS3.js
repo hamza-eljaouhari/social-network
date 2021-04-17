@@ -13,7 +13,7 @@ module.exports = function readFromS3(fileName) {
             Bucket: BUCKET_NAME,
             Key: fileName
         }, function(err, data){
-            if (err) reject(err)
+            if (err) reject("Error connecting to S3 bucket")
             else resolve(data);  
         });
     });

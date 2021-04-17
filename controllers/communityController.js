@@ -2,28 +2,37 @@
 const model  = require('../models');
 const Joi    = require('joi')
 
+const DEFAULT_PER_PAGE = 15;
 
-
-
- module.exports.getCommunities = async(req,res,next) => {
+module.exports.getCommunities = async(req,res,next) => {
     try{
-        req.query.per_page = req.query.per_page && req.query.per_page > 0 ? req.query.per_page : 5
-        req.query.page     = req.query.page && req.query.page > 0 ? req.query.page : 1
-        let offset         = (req.query.page - 1) * req.query.per_page;
-        req.query.sort_field = req.query.sort_field ? req.query.sort_field : 'created_at'
-        req.query.sort_type  = req.query.sort_type ? req.query.sort_type : 'desc'
+        const communities = await model.Community.findAndCountAll();
+
+        res.status(200).send(communities)
+    }catch(error){
+        res.status(400).send(error);
+    }
+}
+
+ module.exports.getCommunitiesWithPagination = async(req,res,next) => {
+    try{
+        req.params.per_page = req.params.per_page && req.params.per_page > 0 ? req.params.per_page : DEFAULT_PER_PAGE
+        req.params.page     = req.params.page && req.params.page > 0 ? req.params.page : 1
+        let offset         = (req.params.page - 1) * req.params.per_page;
+        req.params.sort_field = req.params.sort_field ? req.params.sort_field : 'created_at'
+        req.params.sort_type  = req.params.sort_type ? req.params.sort_type : 'desc'
         
         let communities  = {}
         let response = await model.Community.findAndCountAll({
-                                    limit : parseInt(req.query.per_page),
-                                    order: [[req.query.sort_field, req.query.sort_type]],
+                                    limit : parseInt(req.params.per_page),
+                                    order: [[req.params.sort_field, req.params.sort_type]],
                                     offset : parseInt(offset),
                                     include : [{model  : model.User , attributes : ['id'] },]
                                 })
-        communities.data = response.rows
+        communities.rows = response.rows
         communities.count = response.count;
-        communities.per_page = req.query.per_page
-        communities.current_page = req.query.page
+        communities.per_page = req.params.per_page
+        communities.current_page = req.params.page
         return res.status(200).send(communities);
     }catch(error){
         return res.status(400).send({message : 'something went wrong'})
