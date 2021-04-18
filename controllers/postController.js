@@ -32,6 +32,7 @@ module.exports.getPostsWithPagination = async(req,res,next) => {
         req.params.sort_type  = req.params.sort_type ? req.params.sort_type : 'desc'
         
         let posts  = {}
+
         var request = {
             limit : parseInt(req.params.per_page),
             order: [[req.params.sort_field, req.params.sort_type]],
@@ -39,16 +40,34 @@ module.exports.getPostsWithPagination = async(req,res,next) => {
             include : [{model  : model.Community , attributes : ['id'] },{model  : model.User , attributes : ['id'] },]
         };
 
-        if(req.query.entity_query_type === "self"){
-            request.where = { owner_id: req.auth.id }
+        console.log(Object.keys(req.query).length > 0)
+        console.log(req.query)
+        if(Object.keys(req.query).length > 0){
+            var where = {}
+
+            if(req.query.is_draft === 'true'){
+                where.published_at = null;
+                where.owner_id = req.auth.id;
+            }
+            if(req.query.entity_query_type === "self"){
+                where.owner_id = req.auth.id;
+            }
+
+            console.log(where)
+
+            request.where = where;
+
+            console.log(request)
         }
+    
 
         let response = await model.Post.findAndCountAll(request);
 
-        posts.rows = response.rows
+        posts.rows = response.rows;
         posts.count = response.count;
-        posts.per_page = req.params.per_page
-        posts.current_page = req.params.page_number
+        posts.per_page = req.params.per_page;
+        posts.current_page = req.params.page_number;
+
         return res.status(200).send(posts);
     }catch(error){
         return res.status(400).send({message : 'something went wrong'})

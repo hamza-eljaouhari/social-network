@@ -8,5 +8,10 @@ module.exports = {
         return list.sort((postA, postB) => {
             return new Date(postA.updated_at) - new Date(postB.updated_at);
         });
+    },
+    sortByPublishedAt: function(list){
+        return list.sort((postA, postB) => {
+            return new Date(postA.published_at) - new Date(postB.published_at);
+        });
     }
 }

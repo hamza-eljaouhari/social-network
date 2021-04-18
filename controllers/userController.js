@@ -1,8 +1,7 @@
 
 const model  = require('../models');
 const Joi    = require('joi');
-const { sortByCreatedAt, sortByUpdatedAt } = require('../utils/sort')
-const { changeToOneDimensionalArray } = require('../utils/array')
+const { sortByPublishedAt } = require('../utils/sort')
 
 
 module.exports.signUp = async (req,res,next) => {
@@ -184,9 +183,7 @@ module.exports.getUserFeed = async (req, res, next) => {
             };
         });
 
-        const sortedPostsByCreatedAt = sortByCreatedAt(groupedPosts)
-
-        const sortedPostsByUpdatedAt = sortByUpdatedAt(sortedPostsByCreatedAt);
+        const sortedPostsByUpdatedAt = sortByPublishedAt(groupedPosts);
         
         res.status(200).send({
             user: {
