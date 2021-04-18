@@ -32,12 +32,19 @@ module.exports.getPostsWithPagination = async(req,res,next) => {
         req.params.sort_type  = req.params.sort_type ? req.params.sort_type : 'desc'
         
         let posts  = {}
-        let response = await model.Post.findAndCountAll({
-                                    limit : parseInt(req.params.per_page),
-                                    order: [[req.params.sort_field, req.params.sort_type]],
-                                    offset : parseInt(offset),
-                                    include : [{model  : model.Community , attributes : ['id'] },{model  : model.User , attributes : ['id'] },]
-                                })
+        var request = {
+            limit : parseInt(req.params.per_page),
+            order: [[req.params.sort_field, req.params.sort_type]],
+            offset : parseInt(offset),
+            include : [{model  : model.Community , attributes : ['id'] },{model  : model.User , attributes : ['id'] },]
+        };
+
+        if(req.query.entity_query_type === "self"){
+            request.where = { owner_id: req.auth.id }
+        }
+
+        let response = await model.Post.findAndCountAll(request);
+
         posts.rows = response.rows
         posts.count = response.count;
         posts.per_page = req.params.per_page
